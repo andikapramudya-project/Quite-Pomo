@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "kind": "mini-app",
+  "title": "Quiet Pomo — Linear + Apple",
+  "entry": "index.html",
+  "renderer": "mini-app",
+  "status": "complete",
+  "exports": [
+    "html",
+    "standalone",
+    "site",
+    "png",
+    "jpeg",
+    "pdf"
+  ],
+  "supportingFiles": [
+    "styles.css",
+    "app.js",
+    "focus-data.js",
+    "timer-worker.js",
+    "assets/logo.svg",
+    "DESIGN.md"
+  ],
+  "createdAt": "2026-11-01T22:04:30.070Z",
+  "updatedAt": "2026-11-01T22:04:30.070Z",
+  "sourceSkillId": "od:prototype:redesign-skill"
+}

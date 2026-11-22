@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Quiet Pomo — ruang tenang untuk fokus, dengan timer Pomodoro, tugas, statistik, audio, dan tema pribadi."
+    />
+    <title>Quiet Pomo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#mainContent">Langsung ke timer</a>
+    <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="icon-clock" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5h4" />
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24">
+          <path d="M3 6h3m4 0h11M3 12h11m4 0h3M3 18h5m4 0h9" />
+          <circle cx="8" cy="6" r="2" />
+          <circle cx="16" cy="12" r="2" />
+          <circle cx="10" cy="18" r="2" />
+        </symbol>
+        <symbol id="icon-bell" viewBox="0 0 24 24">
+          <path d="M12 3v2M7 10a5 5 0 0 1 10 0v4l2 3H5l2-3zM10 20a2 2 0 0 0 4 0" />
+        </symbol>
+        <mask id="bell-slash-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+          <rect width="24" height="24" fill="white" stroke="none" />
+          <path d="m3 3 18 18" fill="none" stroke="black" stroke-width="6" stroke-linecap="round" />
+        </mask>
+        <symbol id="icon-bell-off" viewBox="0 0 24 24">
+          <g mask="url(#bell-slash-cutout)"><use href="#icon-bell" /></g>
+          <path d="m3 3 18 18" />
+        </symbol>
+        <symbol id="icon-reset" viewBox="0 0 24 24">
+          <path d="M6.343 17.657a8 8 0 1 0 0-11.314" />
+          <path d="M4 4v6h6Z" fill="currentColor" stroke="none" />
+        </symbol>
+        <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></symbol>
+        <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+        <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
+        <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5" /></symbol>
+      </defs>
+    </svg>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Quiet Pomo">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-clock" /></svg></span>
+          <span>Quiet Pomo</span>
+        </a>
+        <nav class="top-actions" aria-label="Aksi utama">
+          <span class="workspace-label" aria-hidden="true">Workspace</span>
+          <button class="icon-button" id="settingsToggle" type="button" title="Buka workspace: tugas, pengaturan, dan statistik" aria-label="Buka workspace: tugas, pengaturan, dan statistik" aria-controls="settingsDrawer" aria-expanded="false">
+            <span class="button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><use href="#icon-settings" /></svg>
+            </span>
+          </button>
+          <button class="icon-button" id="notificationPermission" type="button" title="Aktifkan notifikasi" aria-label="Aktifkan notifikasi">
+            <span class="button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><use href="#icon-bell-off" /></svg>
+            </span>
+          </button>
+          <button class="icon-button" id="resetDay" type="button" title="Simpan progres dan reset hari ini" aria-label="Simpan progres dan reset hari ini">
+            <span class="button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><use href="#icon-reset" /></svg>
+            </span>
+          </button>
+        </nav>
+      </header>
+
+      <main class="layout" id="mainContent" tabindex="-1">
+        <section class="timer-panel" aria-labelledby="timerTitle">
+          <div class="mode-tabs" role="tablist" aria-label="Mode timer">
+            <button class="mode-tab active" id="pomodoroTab" type="button" data-mode="pomodoro" role="tab" aria-selected="true" aria-controls="timerPanel">Pomodoro</button>
+            <button class="mode-tab" id="shortBreakTab" type="button" data-mode="shortBreak" role="tab" aria-selected="false" aria-controls="timerPanel" tabindex="-1">Short Break</button>
+            <button class="mode-tab" id="longBreakTab" type="button" data-mode="longBreak" role="tab" aria-selected="false" aria-controls="timerPanel" tabindex="-1">Long Break</button>
+          </div>
+
+          <div class="timer-card" id="timerPanel" role="tabpanel" aria-labelledby="pomodoroTab">
+            <p class="eyebrow" id="timerTitle">Working on</p>
+            <h1 class="current-task" id="currentTask">Time to focus</h1>
+            <div class="timer-display" id="timerDisplay" role="timer" aria-label="Waktu tersisa" aria-live="off">25:00</div>
+            <div class="progress-track" aria-hidden="true">
+              <span id="progressFill"></span>
+            </div>
+            <div class="timer-actions">
+              <button class="primary-button" id="startPause" type="button">Start</button>
+              <button class="ghost-button" id="skipMode" type="button">Skip</button>
+              <button class="ghost-button" id="resetTimer" type="button">Reset</button>
+            </div>
+          </div>
+
+          <div class="stats-row" aria-label="Ringkasan progres">
+            <article>
+              <strong id="sessionCount">0</strong>
+              <span>Sessions today</span>
+            </article>
+            <article>
+              <strong id="focusMinutes">0m</strong>
+              <span>Focus today</span>
+            </article>
+            <article>
+              <strong id="finishEstimate">--:--</strong>
+              <span>Finish at</span>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <div class="settings-drawer" id="settingsDrawer" aria-hidden="true" inert>
+        <button class="drawer-backdrop" id="drawerBackdrop" type="button" aria-label="Tutup pengaturan"></button>
+        <aside class="side-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+          <div class="drawer-header">
+            <div>
+              <p class="eyebrow">Workspace</p>
+              <h2 id="drawerTitle">Your workspace</h2>
+            </div>
+            <button class="icon-button" id="settingsClose" type="button" title="Tutup pengaturan" aria-label="Tutup pengaturan">
+              <span class="button-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-close" /></svg></span>
+            </button>
+          </div>
+
+          <div class="drawer-tabs" role="tablist" aria-label="Bagian pengaturan">
+            <button type="button" role="tab" id="tasksTab" data-panel="tasksPanel" aria-controls="tasksPanel" aria-selected="true">Tasks</button>
+            <button type="button" role="tab" id="setupTab" data-panel="setupPanel" aria-controls="setupPanel" aria-selected="false" tabindex="-1">Settings</button>
+            <button type="button" role="tab" id="statisticsTab" data-panel="statisticsPanel" aria-controls="statisticsPanel" aria-selected="false" tabindex="-1">Statistics</button>
+          </div>
+          <div class="drawer-content">
+            <section class="tasks-section" id="tasksPanel" role="tabpanel" aria-labelledby="tasksTab">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Tasks</p>
+                  <h2>Today</h2>
+                </div>
+                <span id="taskSummary">0 left</span>
+              </div>
+
+              <form class="task-form" id="taskForm">
+                <input id="taskInput" type="text" placeholder="Tulis tugas..." autocomplete="off" maxlength="200" aria-label="Nama tugas" />
+                <input id="taskEstimate" type="number" min="1" max="20" value="1" aria-label="Estimasi pomodoro" />
+                <button type="submit" title="Tambah tugas" aria-label="Tambah tugas"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus" /></svg></button>
+              </form>
+
+              <div class="task-list" id="taskList" aria-live="polite"></div>
+            </section>
+
+            <section class="settings-section" id="setupPanel" role="tabpanel" aria-labelledby="setupTab" hidden>
+              <div class="section-heading"><div><p class="eyebrow">Appearance</p><h2>Make it yours</h2></div></div>
+              <div class="theme-picker" aria-label="Tema utama">
+                <button class="theme-swatch active" type="button" data-theme="paper" title="Paper · putih" aria-label="Paper · putih"><span>Paper</span></button>
+                <button class="theme-swatch" type="button" data-theme="sage" title="Sage · hijau" aria-label="Sage · hijau"><span>Sage</span></button>
+                <button class="theme-swatch" type="button" data-theme="ink" title="Ink · hitam" aria-label="Ink · hitam"><span>Ink</span></button>
+              </div>
+              <p class="field-note">Palet pribadi</p>
+              <div class="custom-themes" id="customThemes"></div>
+              <form class="custom-theme-form" id="customThemeForm">
+                <label class="custom-color" title="Pilih warna"><input id="customColor" type="color" value="#ffffff" aria-label="Warna custom" /></label>
+                <input id="customThemeName" type="text" maxlength="24" placeholder="Nama warna (opsional)" aria-label="Nama warna custom" />
+                <button class="small-button" type="submit">Simpan</button>
+              </form>
+              <p class="field-note appearance-note">Latar dan panel mengikuti warna pilihanmu.</p>
+              <hr class="section-divider" />
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Settings</p>
+                  <h2>Focus setup</h2>
+                </div>
+              </div>
+
+              <div class="settings-grid">
+                <label>
+                  <span>Pomodoro</span>
+                  <input id="pomodoroDuration" type="number" min="1" max="180" value="25" />
+                </label>
+                <label>
+                  <span>Short break</span>
+                  <input id="shortBreakDuration" type="number" min="1" max="90" value="5" />
+                </label>
+                <label>
+                  <span>Long break</span>
+                  <input id="longBreakDuration" type="number" min="1" max="120" value="15" />
+                </label>
+                <label>
+                  <span>Long interval</span>
+                  <input id="longBreakInterval" type="number" min="2" max="12" value="4" />
+                </label>
+              </div>
+
+              <div class="toggle-list">
+                <label class="switch-row">
+                  <span>Auto-start breaks</span>
+                  <input id="autoStartBreaks" type="checkbox" />
+                </label>
+                <label class="switch-row">
+                  <span>Auto-start pomodoros</span>
+                  <input id="autoStartPomodoros" type="checkbox" />
+                </label>
+              </div>
+
+              <div class="sound-row">
+                <label class="audio-loop-field">
+                  <span>Alarm</span>
+                  <select id="alarmSound" class="native-audio-select" tabindex="-1" aria-hidden="true">
+                    <option value="assets/notification/alarm-beep.mp3">Alarm beep</option>
+                    <option value="assets/notification/beeps.mp3">Beeps</option>
+                    <option value="assets/notification/bell.wav">Bell</option>
+                    <option value="assets/notification/musical1.mp3">Musical 1</option>
+                    <option value="assets/notification/musical2.mp3">Musical 2</option>
+                    <option value="assets/notification/piano-music.mp3">Piano music</option>
+                    <option value="assets/notification/ring-tone.mp3">Ring tone</option>
+                    <option value="assets/notification/timer.mp3">Timer</option>
+                    <option value="assets/notification/victory.mp3" selected>Victory</option>
+                  </select>
+                  <div class="audio-select" id="alarmSelect">
+                    <button
+                      class="audio-select-button"
+                      id="alarmSoundButton"
+                      type="button"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                      aria-controls="alarmSoundMenu"
+                      aria-label="Suara alarm"
+                    >
+                      <span id="alarmSoundLabel">Victory</span>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </button>
+                    <div class="audio-select-menu" id="alarmSoundMenu" role="listbox" aria-label="Suara alarm" inert>
+                      <button type="button" role="option" data-value="assets/notification/alarm-beep.mp3">Alarm beep</button>
+                      <button type="button" role="option" data-value="assets/notification/beeps.mp3">Beeps</button>
+                      <button type="button" role="option" data-value="assets/notification/bell.wav">Bell</button>
+                      <button type="button" role="option" data-value="assets/notification/musical1.mp3">Musical 1</button>
+                      <button type="button" role="option" data-value="assets/notification/musical2.mp3">Musical 2</button>
+                      <button type="button" role="option" data-value="assets/notification/piano-music.mp3">Piano music</button>
+                      <button type="button" role="option" data-value="assets/notification/ring-tone.mp3">Ring tone</button>
+                      <button type="button" role="option" data-value="assets/notification/timer.mp3">Timer</button>
+                      <button type="button" role="option" data-value="assets/notification/victory.mp3">Victory</button>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <div class="sound-row">
+                <label class="audio-loop-field">
+                  <span>Audio loop</span>
+                  <select id="ambientSound" class="native-audio-select" tabindex="-1" aria-hidden="true">
+                    <option value="">Off</option>
+                    <option value="assets/audio/coffee-shop.m4a">Coffee shop</option>
+                    <option value="assets/audio/fast-ticking.m4a">Fast ticking</option>
+                    <option value="assets/audio/fire-burning.m4a" selected>Fire burning</option>
+                    <option value="assets/audio/library.m4a">Library</option>
+                    <option value="assets/audio/ocean-shore.m4a">Ocean shore</option>
+                    <option value="assets/audio/rain.m4a">Rain</option>
+                    <option value="assets/audio/stream.m4a">Stream</option>
+                    <option value="assets/audio/ticking.m4a">Ticking</option>
+                    <option value="assets/audio/wind-through-trees.m4a">Wind through trees</option>
+                    <option value="assets/audio/wind-with-crickets.m4a">Wind with crickets</option>
+                  </select>
+                  <div class="audio-select" id="ambientSelect">
+                    <button
+                      class="audio-select-button"
+                      id="ambientSoundButton"
+                      type="button"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                      aria-controls="ambientSoundMenu"
+                      aria-label="Audio loop"
+                    >
+                      <span id="ambientSoundLabel">Fire burning</span>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </button>
+                    <div class="audio-select-menu" id="ambientSoundMenu" role="listbox" aria-label="Audio loop" inert>
+                      <button type="button" role="option" data-value="">Off</button>
+                      <button type="button" role="option" data-value="assets/audio/coffee-shop.m4a">Coffee shop</button>
+                      <button type="button" role="option" data-value="assets/audio/fast-ticking.m4a">Fast ticking</button>
+                      <button type="button" role="option" data-value="assets/audio/fire-burning.m4a">Fire burning</button>
+                      <button type="button" role="option" data-value="assets/audio/library.m4a">Library</button>
+                      <button type="button" role="option" data-value="assets/audio/ocean-shore.m4a">Ocean shore</button>
+                      <button type="button" role="option" data-value="assets/audio/rain.m4a">Rain</button>
+                      <button type="button" role="option" data-value="assets/audio/stream.m4a">Stream</button>
+                      <button type="button" role="option" data-value="assets/audio/ticking.m4a">Ticking</button>
+                      <button type="button" role="option" data-value="assets/audio/wind-through-trees.m4a">Wind through trees</button>
+                      <button type="button" role="option" data-value="assets/audio/wind-with-crickets.m4a">Wind with crickets</button>
+                    </div>
+                  </div>
+                </label>
+                <label>
+                  <span>Volume audio</span>
+                  <input id="ambientVolume" type="range" min="0" max="100" value="45" />
+                </label>
+              </div>
+
+              <label class="notification-label">
+                <span>Notifikasi custom</span>
+                <textarea id="notificationText" rows="3">Waktunya berpindah mode. Ambil napas sebentar.</textarea>
+              </label>
+
+            </section>
+            <section class="statistics-section" id="statisticsPanel" role="tabpanel" aria-labelledby="statisticsTab" hidden>
+              <div class="section-heading"><div><p class="eyebrow">A little progress, every day</p><h2>Focus history</h2></div><div class="backup-actions"><button class="small-button" id="importHistory" type="button" title="Gabungkan cadangan statistik">Impor</button><button class="small-button" id="exportHistory" type="button" title="Unduh cadangan statistik">Ekspor</button></div></div>
+              <input id="importHistoryFile" type="file" accept=".json,application/json" hidden />
+              <div class="period-tabs" role="group" aria-label="Periode statistik">
+                <button type="button" data-period="1" aria-pressed="true">Hari ini</button>
+                <button type="button" data-period="7" aria-pressed="false">7 hari</button>
+                <button type="button" data-period="30" aria-pressed="false">30 hari</button>
+                <button type="button" data-period="all" aria-pressed="false">Semua</button>
+              </div>
+              <label class="history-date-field"><span>Lihat tanggal tertentu</span><input id="historyDate" type="date" /><button type="button" class="text-button" id="clearHistoryDate" hidden>Hapus filter tanggal</button></label>
+              <div class="history-summary"><article><strong id="historyFocus">0m</strong><span>Waktu fokus</span></article><article><strong id="historySessions">0</strong><span>Sesi selesai</span></article></div>
+              <div class="focus-chart" id="focusChart" aria-label="Grafik waktu fokus harian"></div>
+              <p class="field-note" id="chartCaption" hidden></p>
+              <p class="field-note">Progres aktif ikut dalam ringkasan. Reset menyimpan progres ke riwayat, lalu memulai penghitung baru.</p>
+              <div class="history-toolbar"><label><input id="selectAllHistory" type="checkbox" /><span>Pilih arsip</span></label><button class="text-button danger-text" id="deleteHistory" type="button" disabled>Hapus terpilih</button></div>
+              <div class="history-list" id="historyList"></div>
+              <p class="field-note">Tersimpan di browser ini. Ekspor untuk membuat cadangan. Impor mendukung ekspor versi lama dan menggabungkan statistik setelah konfirmasi.</p>
+            </section>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="toast" id="statusMessage" role="status" aria-atomic="true" tabindex="0" hidden></div>
+    <div class="storage-warning" id="storageWarning" role="alert" hidden>Data belum dapat disimpan di browser. Ekspor statistik sebelum menutup halaman.</div>
+    <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmTitle" aria-describedby="confirmDescription">
+      <h2 id="confirmTitle"></h2><p id="confirmDescription"></p>
+      <label class="import-snapshot-option" id="confirmImportOptions" hidden><input id="confirmImportCurrent" type="checkbox" /><span>Sertakan progres aktif dari ekspor lama. Ada data pada tanggal yang sama; centang hanya jika progres ini belum tercatat agar total tidak ganda.</span></label>
+      <div class="confirm-actions"><button class="small-button" id="confirmCancel" type="button">Batal</button><button class="small-button" id="confirmAccept" type="button">Lanjutkan</button></div>
+    </dialog>
+    <script src="focus-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
