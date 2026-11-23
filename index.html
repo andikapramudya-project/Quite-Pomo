@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Newsreader:opsz,wght@6..72,400..500&display=swap" rel="stylesheet" />
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/icons/icon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="Quiet Pomo" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-view="focus" data-timer-mode="pomodoro" data-timer="idle">
@@ -21,8 +25,8 @@
         <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11" /><path d="m3.5 6.5 1.2 1.2 2-2.2M3.5 12l1.2 1.2 2-2.2" /><circle cx="5" cy="17.5" r="1.1" /></symbol>
         <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16" /><path d="M7 16.5v-5M12 16.5V6M17 16.5v-8" /></symbol>
         <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></symbol>
-        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 10.5a5.5 5.5 0 0 1 11 0v3.2l1.7 2.8H4.8l1.7-2.8z" /><path d="M10 19.5a2 2 0 0 0 4 0" /></symbol>
-        <symbol id="i-bell-off" viewBox="0 0 24 24"><path d="M8.2 5.9A5.5 5.5 0 0 1 17.5 10.5v3.2l1 1.6M16 16.5H4.8l1.7-2.8v-3.2c0-.6.1-1.2.3-1.8" /><path d="M10 19.5a2 2 0 0 0 4 0M3.5 3.5l17 17" /></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.25 16.5V11a5.75 5.75 0 0 1 11.5 0v5.5l1.5 1.5H4.75z" /><path d="M10 21h4" /></symbol>
+        <symbol id="i-bell-off" viewBox="0 0 24 24"><path d="M17.75 13.5V11A5.75 5.75 0 0 0 8.6 6.4M6.6 8.6c-.23.75-.35 1.55-.35 2.4v5.5L4.75 18H16" /><path d="M10 21h4M4 4l16 16" /></symbol>
         <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8z" fill="currentColor" /></symbol>
         <symbol id="i-pause" viewBox="0 0 24 24"><rect x="7" y="5.5" width="3.2" height="13" rx="1" fill="currentColor" /><rect x="13.8" y="5.5" width="3.2" height="13" rx="1" fill="currentColor" /></symbol>
         <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5.5 6.5v11l8-5.5z" /><path d="M18 6v12" /></symbol>
@@ -49,7 +53,7 @@
     <div class="app">
       <header class="topbar">
         <a class="brand" href="#" data-nav="focus" aria-label="Quiet Pomo, kembali ke fokus">
-          <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="7" /><circle cx="12" cy="12.5" r="6.2" /><path d="M12 9.2v3.4l2.2 1.6" /></svg>
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="bm-tile" width="32" height="32" rx="9"/><g transform="translate(16 18.8) scale(1.1 .95) translate(-16 -18.8)"><circle class="bm-rest" cx="16" cy="18.8" r="8.6"/><path class="bm-fill" d="M16 18.8L24.08 21.74A8.6 8.6 0 1 1 16 10.2z"/></g><g class="bm-gap"><ellipse cx="13.65" cy="11.46" rx="2.7" ry="1.05" transform="rotate(-200 13.65 11.46)"/><ellipse cx="13.73" cy="9.54" rx="2.7" ry="1.05" transform="rotate(-155 13.73 9.54)"/><ellipse cx="18.27" cy="9.54" rx="2.7" ry="1.05" transform="rotate(-25 18.27 9.54)"/><ellipse cx="18.35" cy="11.46" rx="2.7" ry="1.05" transform="rotate(20 18.35 11.46)"/><path d="M16 10.6V6.4"/></g><g class="bm-fill"><ellipse cx="13.65" cy="11.46" rx="2.7" ry="1.05" transform="rotate(-200 13.65 11.46)"/><ellipse cx="13.73" cy="9.54" rx="2.7" ry="1.05" transform="rotate(-155 13.73 9.54)"/><ellipse cx="18.27" cy="9.54" rx="2.7" ry="1.05" transform="rotate(-25 18.27 9.54)"/><ellipse cx="18.35" cy="11.46" rx="2.7" ry="1.05" transform="rotate(20 18.35 11.46)"/></g><path class="bm-stem" d="M16 10.6V6.4"/></svg>
           <span class="brand-name">Quiet Pomo</span>
         </a>
 
@@ -79,8 +83,8 @@
               <svg class="icon" aria-hidden="true"><use href="#i-pause" /></svg>
             </button>
           </div>
-          <button class="icon-button" id="notificationPermission" type="button" aria-label="Aktifkan notifikasi" data-tooltip="Aktifkan notifikasi">
-            <svg class="icon" aria-hidden="true"><use href="#i-bell-off" /></svg>
+          <button class="icon-button notify-button" id="notificationPermission" type="button" aria-label="Aktifkan notifikasi" data-tooltip="Aktifkan notifikasi">
+            <svg class="icon" aria-hidden="true"><use href="#i-bell-off" /></svg><span class="notify-dot" aria-hidden="true"></span>
           </button>
         </div>
       </header>
@@ -110,6 +114,7 @@
             </div>
 
             <div class="context" id="contextCard">
+              <span class="context-glyph" aria-hidden="true"><svg class="icon"><use id="contextIconUse" href="#i-focus" /></svg></span>
               <div class="context-copy">
                 <p class="eyebrow" id="timerTitle">Sedang dikerjakan</p>
                 <p class="current-task" id="currentTask">Fokus bebas</p>
@@ -164,14 +169,14 @@
               <label class="field-label" for="taskInput">Tugas baru</label>
               <div class="task-form-row">
                 <input id="taskInput" type="text" placeholder="Misalnya: Menulis bab dua" autocomplete="off" maxlength="200" aria-describedby="taskFormHint" />
+                <button class="button button-primary task-add" type="submit" aria-label="Tambah tugas"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg><span class="task-add-label">Tambah</span></button>
                 <div class="estimate" role="group" aria-label="Estimasi pomodoro untuk tugas baru">
                   <button type="button" class="estimate-step" data-step="-1" aria-label="Kurangi estimasi"><svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg></button>
                   <input id="taskEstimate" type="number" min="1" max="20" value="1" inputmode="numeric" aria-label="Estimasi pomodoro" />
                   <button type="button" class="estimate-step" data-step="1" aria-label="Tambah estimasi"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></button>
                 </div>
-                <button class="button button-primary task-add" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg><span>Tambah</span></button>
+                <p class="field-hint" id="taskFormHint">Estimasi 1–20 pomodoro</p>
               </div>
-              <p class="field-hint" id="taskFormHint">Angka = perkiraan jumlah pomodoro (1–20).</p>
             </form>
 
             <div class="task-list" id="taskList"></div>

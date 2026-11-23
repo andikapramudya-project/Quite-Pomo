@@ -42,7 +42,7 @@ Drawer lama dihapus. Drawer menutupi timer dan meng-*inert* seluruh halaman, sem
 - **Pilih untuk fokus** dan **centang selesai** dibedakan dengan tegas:
   - Kotak centang ada di kiri.
   - Badan tugas adalah tombol "Fokuskan" dengan ikon target.
-  - Tugas aktif diberi chip "Sedang fokus" dan garis aksen di tepi kiri.
+  - Tugas aktif ditandai "● Sedang fokus" di baris meta dan garis aksen di tepi kiri. Baris dibuat ringkas: tinggi minimum 56 px, judul 14 px, centang 20 px di area sentuh 44 px.
 - Estimasi, subtugas, dan Hapus disimpan di panel detail yang bisa dibuka (chevron), sehingga baris tetap ringkas.
 - Tugas selesai dikelompokkan di "Selesai (n)" yang bisa dilipat.
 - Hapus tugas langsung berlaku dan bisa dibatalkan lewat toast **Urungkan**.
@@ -63,6 +63,15 @@ Pengaturan dikelompokkan menjadi Timer, Suara, Notifikasi, dan Tampilan.
 - Durasi divalidasi. Nilai di luar batas disimpan pada batas terdekat, dan alasannya ditampilkan.
 - Notifikasi menampilkan status izin (aktif / belum / diblokir / tidak didukung / butuh HTTPS) beserta tindakan yang sesuai.
 - Tema ditampilkan sebagai pratinjau kecil dari palet aslinya.
+
+## Ikon brand dan notifikasi
+
+- **Tanda brand:** tomat (simbol Pomodoro) di dalam tile bersudut 9/32. Badan tomat sekaligus menjadi dial timer: satu irisan dibuat transparan sebagai sisa waktu, mengingatkan pada timer dapur. Kelopak (sepal) dipisahkan dari badan oleh celah berwarna tile supaya tetap terbaca di 16 px. Warnanya mengikuti `--text` dan `--bg`, sehingga cocok di semua tema. `assets/logo.svg` (favicon) memakai bentuk yang sama.
+- **Tombol notifikasi:** tile bergaris dengan radius `--r-sm` di sisi kanan header, berpasangan dengan tile brand di kiri. Bel memakai garis 1,75 px seperti ikon lain dan bilah pemukul datar. Status: belum aktif memakai bel bercoret berwarna `--muted`. Aktif memakai bel berwarna `--text` dengan titik `--tone-rest` di sudut tile. Saat diblokir, tidak didukung, atau butuh HTTPS, tombol disembunyikan dari header; penjelasannya ada di Pengaturan → Notifikasi.
+- **Ikon aplikasi:** `manifest.webmanifest` dan `assets/icons/` (32, 180 apple-touch, 192, 512, dan 512 maskable dengan tomat di zona aman).
+- **Form tugas baru:** baris pertama berisi nama tugas dan tombol Tambah, baris kedua berisi stepper estimasi dan petunjuknya. Di bawah 480 px tombol Tambah menjadi ikon saja.
+- **Angka timer:** `min(10.5rem, 23vw, 19svh)` sehingga tetap proporsional saat ukuran huruf sistem diperbesar atau layar pendek.
+- **Kartu "Sedang dikerjakan":** glyph 36 px (target untuk tugas, daun untuk rehat, stopwatch untuk fokus bebas), judul 15 px semibold maksimal dua baris, meta 12 px tabular (`Pomodoro 1/3 · Subtugas 2/4`), dan tombol Ganti tanpa bingkai.
 
 ## Tokens
 
