@@ -146,6 +146,7 @@ const elements = {
   currentTask: $("#currentTask"),
   contextMeta: $("#contextMeta"),
   contextCard: $("#contextCard"),
+  contextIconUse: $("#contextIconUse"),
   changeTask: $("#changeTask"),
   startPause: $("#startPause"),
   startPauseLabel: $("#startPauseLabel"),
@@ -742,10 +743,13 @@ function renderNotificationButton(permission = notificationPermissionState()) {
   const [label, title, hint, action] = PERMISSION_COPY[permission] || PERMISSION_COPY.default;
   const button = elements.notificationPermission;
   if (button.dataset.permission !== permission) {
-    button.querySelector("use").setAttribute("href", allowed ? "#i-bell" : "#i-bell-off");
-    elements.permissionIconUse.setAttribute("href", allowed ? "#i-bell" : "#i-bell-off");
+    const icon = allowed ? "#i-bell" : "#i-bell-off";
+    button.querySelector("use").setAttribute("href", icon);
+    elements.permissionIconUse.setAttribute("href", icon);
   }
   button.dataset.permission = permission;
+  // A permanent "no" lives in Settings only; the header keeps just the actionable states.
+  button.hidden = permission === "denied" || permission === "unsupported" || permission === "insecure";
   button.dataset.tooltip = label;
   button.setAttribute("aria-label", label);
   elements.permissionTitle.textContent = title;
@@ -987,7 +991,7 @@ function renderTimer() {
   let meta = "";
   if (!isBreak && task) {
     const doneSubtasks = task.subtasks.filter((subtask) => subtask.completed).length;
-    meta = `Pomodoro ${Math.min(task.done + 1, task.estimate)} dari ${task.estimate}${task.done >= task.estimate ? " · estimasi tercapai" : ""}${task.subtasks.length ? ` · Subtugas ${doneSubtasks}/${task.subtasks.length}` : ""}`;
+    meta = `Pomodoro ${Math.min(task.done + 1, task.estimate)}/${task.estimate}${task.done >= task.estimate ? " · estimasi tercapai" : ""}${task.subtasks.length ? ` · Subtugas ${doneSubtasks}/${task.subtasks.length}` : ""}`;
   } else if (!isBreak) {
     meta = openTasks.length ? "Pilih tugas agar progresnya tercatat otomatis." : "Tambahkan tugas agar progresnya tercatat otomatis.";
   } else if (task) {
@@ -997,7 +1001,11 @@ function renderTimer() {
   elements.contextMeta.hidden = !meta;
   elements.changeTask.textContent = openTasks.length ? (task ? "Ganti" : "Pilih tugas") : "Tambah tugas";
   elements.changeTask.setAttribute("aria-label", openTasks.length ? "Ganti tugas yang difokuskan" : "Tambah tugas baru");
-  elements.contextCard.dataset.kind = isBreak ? "rest" : task ? "task" : "free";
+  const contextKind = isBreak ? "rest" : task ? "task" : "free";
+  if (elements.contextCard.dataset.kind !== contextKind) {
+    elements.contextIconUse.setAttribute("href", contextKind === "rest" ? "#i-leaf" : contextKind === "task" ? "#i-target" : "#i-focus");
+  }
+  elements.contextCard.dataset.kind = contextKind;
 
   const ambience = soundLabel(AMBIENT_SOUNDS, state.settings.ambientSound);
   elements.ambienceQuickLabel.textContent = state.settings.ambientSound ? `${ambience} · ${state.settings.ambientVolume}%` : "Suara latar: Mati";
@@ -1138,8 +1146,8 @@ function buildTaskRow(task) {
         <svg class="check-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4L19 7" /></svg>
       </button>
       <button class="task-body task-select" type="button" data-role="select" aria-pressed="${active}" ${task.completed ? "disabled" : ""} aria-label="${active ? "Sedang difokuskan" : task.completed ? "Selesai" : "Fokuskan"}: ${safeName}">
-        ${active ? `<span class="active-chip">${icon("target")}Sedang fokus</span>` : ""}<span class="task-name">${safeName}</span>
-        <span class="task-meta">${pomodoroDots(task)}<span>${taskMetaText(task)}</span></span>
+        <span class="task-name">${safeName}</span>
+        <span class="task-meta">${pomodoroDots(task)}<span>${taskMetaText(task)}</span>${active ? `<span class="active-chip">Sedang fokus</span>` : ""}</span>
       </button>
       ${task.completed || active ? "" : `<span class="task-focus-mark" aria-hidden="true">${icon("target")}</span>`}
       <button class="task-expand" type="button" data-role="expand" aria-expanded="${expanded}" aria-controls="${detailId}" aria-label="Detail tugas: ${safeName}">${icon("chevron")}</button>
@@ -1773,7 +1781,7 @@ elements.taskPickList.addEventListener("keydown", (event) => {
 /* Task form */
 
 function setTaskFormError(message) {
-  elements.taskFormHint.textContent = message || "Angka = perkiraan jumlah pomodoro (1–20).";
+  elements.taskFormHint.textContent = message || "Estimasi 1–20 pomodoro";
   elements.taskFormHint.classList.toggle("is-error", Boolean(message));
   if (message) elements.taskInput.setAttribute("aria-invalid", "true"); else elements.taskInput.removeAttribute("aria-invalid");
 }

@@ -81,9 +81,15 @@ try {
   assert.equal(await bellSymbol(page), ON);
   await page.evaluate(() => { setTestPermission("denied"); testPermissionWatcher.dispatchEvent(new Event("change")); });
   await waitForPermission(page, "denied");
-  await page.locator("#notificationPermission").click();
+  // A permanent block hides the header bell; Settings keeps the explanation and the way out.
+  assert.equal(await page.locator("#notificationPermission").isHidden(), true);
+  await page.locator('.nav-item[data-nav="settings"]').click();
+  await page.locator("#permissionAction").click();
   assert.match(await page.locator("#statusMessage").textContent(), /diblokir/);
+  await page.locator('.nav-item[data-nav="focus"]').click();
   await page.evaluate(() => { setTestPermission("default"); Notification.requestPermission = async () => { throw new Error("Unavailable"); }; window.dispatchEvent(new Event("focus")); });
+  await waitForPermission(page, "default");
+  assert.equal(await page.locator("#notificationPermission").isVisible(), true);
   await page.locator("#notificationPermission").click();
   assert.match(await page.locator("#statusMessage").textContent(), /belum dapat diminta/);
   assert.equal(await bellSymbol(page), OFF);
