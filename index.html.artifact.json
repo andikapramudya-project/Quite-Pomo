@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "mini-app",
-  "title": "Quiet Pomo — Linear + Apple",
+  "title": "Quiet Pomo — Quiet Desk",
   "entry": "index.html",
   "renderer": "mini-app",
   "status": "complete",
@@ -16,6 +16,7 @@
   "supportingFiles": [
     "styles.css",
     "app.js",
+    "motion.js",
     "focus-data.js",
     "timer-worker.js",
     "assets/logo.svg",

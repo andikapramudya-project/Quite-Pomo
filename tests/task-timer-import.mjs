@@ -23,18 +23,20 @@ try {
   });
   assert.equal((await stored()).activeTaskId, "task2");
   assert.equal((await stored()).tasks[0].completed, true);
-  assert.equal(await page.locator("#currentTask").textContent(), "Enjoy your break");
-  assert.equal(await page.locator("#timerTitle").textContent(), "Taking a break");
+  assert.equal(await page.locator("#timerTitle").textContent(), "Rehat singkat");
+  assert.match(await page.locator("#contextMeta").textContent(), /Berikutnya: Second/);
+  assert.match(await page.locator("#timerStatusText").textContent(), /Sesi fokus selesai/);
   await page.locator("#skipMode").click();
   assert.equal(await page.locator("#currentTask").textContent(), "Second");
-  assert.equal(await page.locator("#timerTitle").textContent(), "Working on");
+  assert.equal(await page.locator("#timerTitle").textContent(), "Sedang dikerjakan");
   // Both short and long break completion show the task only on returning to focus.
   for (const mode of ["shortBreak", "longBreak"]) {
     await page.evaluate((mode) => { setMode(mode); state.remainingSeconds = 1; startTimer(); lastTickAt = Date.now() - 1000; runSecond(); }, mode);
     assert.equal((await stored()).mode, "pomodoro");
     assert.equal(await page.locator("#currentTask").textContent(), "Second");
   }
-  await page.locator("#settingsToggle").click();
+  // Tasks are visible beside the timer on desktop; no overlay needs opening.
+  assert.equal(await page.locator("#view-tasks").isVisible(), true);
   await task("task2").locator(".task-check").click();
   assert.equal(await task("task2").locator(".task-check").getAttribute("aria-checked"), "true");
   assert.equal((await stored()).activeTaskId, "task3");
@@ -42,7 +44,7 @@ try {
   await task("task2").locator(".task-check").click();
   await task("task2").locator(".task-select").click();
   assert.equal((await stored()).activeTaskId, "task2");
-  await task("task2").locator("summary").click();
+  await task("task2").locator(".task-expand").click();
   const subtaskInput = task("task2").locator(".subtask-form input");
   await subtaskInput.fill("Research"); await subtaskInput.press("Enter");
   await subtaskInput.fill("Write <draft>"); await subtaskInput.press("Enter");
@@ -59,14 +61,14 @@ try {
   await page.reload();
   assert.equal((await stored()).tasks[1].subtasks.length, 2);
   assert.equal((await stored()).tasks[1].subtasks[0].completed, false);
-  await page.locator("#settingsToggle").click();
-  await task("task2").locator("summary").click();
+  await task("task2").locator(".task-expand").click();
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
+    if (width === 390) await page.locator('.nav-item[data-nav="tasks"]').click();
     await page.screenshot({ path: `artifacts/tasks-subtasks-${width}.png`, fullPage: true });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   }
-  await page.locator("#statisticsTab").click();
+  await page.locator('.nav-item[data-nav="stats"]').click();
   const oldBackup = { app: "Quiet Pomo", version: 2, exportedAt: "2026-10-03T00:00:00Z", current: { date: "2026-10-03", sessions: 2, focusSeconds: 1800 }, history: [{ id: "legacy", date: null, sessions: 42, focusSeconds: 63000 }] };
   const upload = async (backup) => page.locator("#importHistoryFile").setInputFiles({ name: "old-export.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(backup)) });
   const before = await stored();

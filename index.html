@@ -2,345 +2,394 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Quiet Pomo — ruang tenang untuk fokus, dengan timer Pomodoro, tugas, statistik, audio, dan tema pribadi."
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Quiet Pomo — ruang tenang untuk mengerjakan satu hal pada satu waktu: timer Pomodoro, tugas, statistik, suara latar, dan tema pribadi." />
+    <meta name="theme-color" content="#f6f5f1" />
     <title>Quiet Pomo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Newsreader:opsz,wght@6..72,400..500&display=swap" rel="stylesheet" />
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <a class="skip-link" href="#mainContent">Langsung ke timer</a>
-    <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <body data-view="focus" data-timer-mode="pomodoro" data-timer="idle">
+    <a class="skip-link" href="#timerDisplay">Langsung ke timer</a>
+
+    <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
       <defs>
-        <symbol id="icon-clock" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 7v5h4" />
-        </symbol>
-        <symbol id="icon-settings" viewBox="0 0 24 24">
-          <path d="M3 6h3m4 0h11M3 12h11m4 0h3M3 18h5m4 0h9" />
-          <circle cx="8" cy="6" r="2" />
-          <circle cx="16" cy="12" r="2" />
-          <circle cx="10" cy="18" r="2" />
-        </symbol>
-        <symbol id="icon-bell" viewBox="0 0 24 24">
-          <path d="M12 3v2M7 10a5 5 0 0 1 10 0v4l2 3H5l2-3zM10 20a2 2 0 0 0 4 0" />
-        </symbol>
-        <mask id="bell-slash-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-          <rect width="24" height="24" fill="white" stroke="none" />
-          <path d="m3 3 18 18" fill="none" stroke="black" stroke-width="6" stroke-linecap="round" />
-        </mask>
-        <symbol id="icon-bell-off" viewBox="0 0 24 24">
-          <g mask="url(#bell-slash-cutout)"><use href="#icon-bell" /></g>
-          <path d="m3 3 18 18" />
-        </symbol>
-        <symbol id="icon-reset" viewBox="0 0 24 24">
-          <path d="M6.343 17.657a8 8 0 1 0 0-11.314" />
-          <path d="M4 4v6h6Z" fill="currentColor" stroke="none" />
-        </symbol>
-        <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></symbol>
-        <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
-        <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
-        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
-        <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5" /></symbol>
+        <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2.5 2.5M10 2.5h4" /></symbol>
+        <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11" /><path d="m3.5 6.5 1.2 1.2 2-2.2M3.5 12l1.2 1.2 2-2.2" /><circle cx="5" cy="17.5" r="1.1" /></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16" /><path d="M7 16.5v-5M12 16.5V6M17 16.5v-8" /></symbol>
+        <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 10.5a5.5 5.5 0 0 1 11 0v3.2l1.7 2.8H4.8l1.7-2.8z" /><path d="M10 19.5a2 2 0 0 0 4 0" /></symbol>
+        <symbol id="i-bell-off" viewBox="0 0 24 24"><path d="M8.2 5.9A5.5 5.5 0 0 1 17.5 10.5v3.2l1 1.6M16 16.5H4.8l1.7-2.8v-3.2c0-.6.1-1.2.3-1.8" /><path d="M10 19.5a2 2 0 0 0 4 0M3.5 3.5l17 17" /></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8z" fill="currentColor" /></symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24"><rect x="7" y="5.5" width="3.2" height="13" rx="1" fill="currentColor" /><rect x="13.8" y="5.5" width="3.2" height="13" rx="1" fill="currentColor" /></symbol>
+        <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5.5 6.5v11l8-5.5z" /><path d="M18 6v12" /></symbol>
+        <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" /><path d="M4.5 4.5v4h4" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4L19 7" /></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" /></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l.9 12.5h9.2L17.5 7M10.2 11v5M13.8 11v5" /></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5" /></symbol>
+        <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m10 7 5 5-5 5" /></symbol>
+        <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" /><circle cx="12" cy="12" r="3" /></symbol>
+        <symbol id="i-waves" viewBox="0 0 24 24"><path d="M3 9c2.2 0 2.2-2 4.5-2S9.8 9 12 9s2.2-2 4.5-2S18.8 9 21 9M3 15c2.2 0 2.2-2 4.5-2s2.3 2 4.5 2 2.2-2 4.5-2 2.3 2 4.5 2" /></symbol>
+        <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14-14-.2 9-5.5 14-13 14z" /><path d="M5 19c3-4 6-6.5 9.5-8.5" /></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4.5v10M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V5M7.5 9 12 4.5 16.5 9M5 19.5h14" /></symbol>
+        <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="4" rx="1" /><path d="M5.5 8.5v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-10M10 12.5h4" /></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M12 11v5.5M12 7.8v.2" /></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 3 19.5h18z" /><path d="M12 10v4.5M12 17v.2" /></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="2" /><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" /></symbol>
       </defs>
     </svg>
-    <div class="app-shell">
+
+    <div class="app">
       <header class="topbar">
-        <a class="brand" href="#" aria-label="Quiet Pomo">
-          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-clock" /></svg></span>
-          <span>Quiet Pomo</span>
+        <a class="brand" href="#" data-nav="focus" aria-label="Quiet Pomo, kembali ke fokus">
+          <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="7" /><circle cx="12" cy="12.5" r="6.2" /><path d="M12 9.2v3.4l2.2 1.6" /></svg>
+          <span class="brand-name">Quiet Pomo</span>
         </a>
-        <nav class="top-actions" aria-label="Aksi utama">
-          <span class="workspace-label" aria-hidden="true">Workspace</span>
-          <button class="icon-button" id="settingsToggle" type="button" title="Buka workspace: tugas, pengaturan, dan statistik" aria-label="Buka workspace: tugas, pengaturan, dan statistik" aria-controls="settingsDrawer" aria-expanded="false">
-            <span class="button-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><use href="#icon-settings" /></svg>
-            </span>
+
+        <nav class="app-nav" aria-label="Bagian aplikasi">
+          <button class="nav-item" type="button" data-nav="focus" aria-current="page">
+            <svg class="icon" aria-hidden="true"><use href="#i-focus" /></svg><span>Fokus</span>
           </button>
-          <button class="icon-button" id="notificationPermission" type="button" title="Aktifkan notifikasi" aria-label="Aktifkan notifikasi">
-            <span class="button-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><use href="#icon-bell-off" /></svg>
-            </span>
+          <button class="nav-item nav-item-tasks" type="button" data-nav="tasks">
+            <svg class="icon" aria-hidden="true"><use href="#i-list" /></svg><span>Tugas</span><span class="nav-badge" id="navTaskBadge" hidden></span>
           </button>
-          <button class="icon-button" id="resetDay" type="button" title="Simpan progres dan reset hari ini" aria-label="Simpan progres dan reset hari ini">
-            <span class="button-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><use href="#icon-reset" /></svg>
-            </span>
+          <button class="nav-item" type="button" data-nav="stats">
+            <svg class="icon" aria-hidden="true"><use href="#i-chart" /></svg><span>Statistik</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="settings">
+            <svg class="icon" aria-hidden="true"><use href="#i-sliders" /></svg><span>Pengaturan</span>
           </button>
         </nav>
-      </header>
 
-      <main class="layout" id="mainContent" tabindex="-1">
-        <section class="timer-panel" aria-labelledby="timerTitle">
-          <div class="mode-tabs" role="tablist" aria-label="Mode timer">
-            <button class="mode-tab active" id="pomodoroTab" type="button" data-mode="pomodoro" role="tab" aria-selected="true" aria-controls="timerPanel">Pomodoro</button>
-            <button class="mode-tab" id="shortBreakTab" type="button" data-mode="shortBreak" role="tab" aria-selected="false" aria-controls="timerPanel" tabindex="-1">Short Break</button>
-            <button class="mode-tab" id="longBreakTab" type="button" data-mode="longBreak" role="tab" aria-selected="false" aria-controls="timerPanel" tabindex="-1">Long Break</button>
-          </div>
-
-          <div class="timer-card" id="timerPanel" role="tabpanel" aria-labelledby="pomodoroTab">
-            <p class="eyebrow" id="timerTitle">Working on</p>
-            <h1 class="current-task" id="currentTask">Time to focus</h1>
-            <div class="timer-display" id="timerDisplay" role="timer" aria-label="Waktu tersisa" aria-live="off">25:00</div>
-            <div class="progress-track" aria-hidden="true">
-              <span id="progressFill"></span>
-            </div>
-            <div class="timer-actions">
-              <button class="primary-button" id="startPause" type="button">Start</button>
-              <button class="ghost-button" id="skipMode" type="button">Skip</button>
-              <button class="ghost-button" id="resetTimer" type="button">Reset</button>
-            </div>
-          </div>
-
-          <div class="stats-row" aria-label="Ringkasan progres">
-            <article>
-              <strong id="sessionCount">0</strong>
-              <span>Sessions today</span>
-            </article>
-            <article>
-              <strong id="focusMinutes">0m</strong>
-              <span>Focus today</span>
-            </article>
-            <article>
-              <strong id="finishEstimate">--:--</strong>
-              <span>Finish at</span>
-            </article>
-          </div>
-        </section>
-      </main>
-
-      <div class="settings-drawer" id="settingsDrawer" aria-hidden="true" inert>
-        <button class="drawer-backdrop" id="drawerBackdrop" type="button" aria-label="Tutup pengaturan"></button>
-        <aside class="side-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-          <div class="drawer-header">
-            <div>
-              <p class="eyebrow">Workspace</p>
-              <h2 id="drawerTitle">Your workspace</h2>
-            </div>
-            <button class="icon-button" id="settingsClose" type="button" title="Tutup pengaturan" aria-label="Tutup pengaturan">
-              <span class="button-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><use href="#icon-close" /></svg></span>
+        <div class="topbar-end">
+          <div class="mini-timer" id="miniTimer" hidden>
+            <button class="mini-timer-open" id="miniTimerOpen" type="button" data-nav="focus" aria-label="Kembali ke timer">
+              <span class="mini-dot" aria-hidden="true"></span>
+              <span class="mini-time" id="miniTime">25:00</span>
+              <span class="mini-label" id="miniLabel">Fokus</span>
+            </button>
+            <button class="mini-timer-toggle" id="miniToggle" type="button" aria-label="Jeda timer">
+              <svg class="icon" aria-hidden="true"><use href="#i-pause" /></svg>
             </button>
           </div>
+          <button class="icon-button" id="notificationPermission" type="button" aria-label="Aktifkan notifikasi" data-tooltip="Aktifkan notifikasi">
+            <svg class="icon" aria-hidden="true"><use href="#i-bell-off" /></svg>
+          </button>
+        </div>
+      </header>
 
-          <div class="drawer-tabs" role="tablist" aria-label="Bagian pengaturan">
-            <button type="button" role="tab" id="tasksTab" data-panel="tasksPanel" aria-controls="tasksPanel" aria-selected="true">Tasks</button>
-            <button type="button" role="tab" id="setupTab" data-panel="setupPanel" aria-controls="setupPanel" aria-selected="false" tabindex="-1">Settings</button>
-            <button type="button" role="tab" id="statisticsTab" data-panel="statisticsPanel" aria-controls="statisticsPanel" aria-selected="false" tabindex="-1">Statistics</button>
+      <main class="views" id="mainContent">
+        <!-- FOKUS -->
+        <section class="view view-focus" id="view-focus" aria-labelledby="focusHeading">
+          <h1 class="visually-hidden" id="focusHeading">Fokus</h1>
+          <div class="stage" id="stage">
+            <div class="mode-switch" id="modeSwitch" role="radiogroup" aria-label="Mode timer">
+              <span class="mode-thumb" aria-hidden="true"></span>
+              <button class="mode-option" type="button" role="radio" data-mode="pomodoro" aria-checked="true">Fokus</button>
+              <button class="mode-option" type="button" role="radio" data-mode="shortBreak" aria-checked="false" tabindex="-1">Rehat singkat</button>
+              <button class="mode-option" type="button" role="radio" data-mode="longBreak" aria-checked="false" tabindex="-1">Rehat panjang</button>
+            </div>
+
+            <p class="timer-status" id="timerStatus"><span class="status-mark" aria-hidden="true"></span><span id="timerStatusText">Siap fokus</span></p>
+
+            <div class="clock">
+              <div class="timer-display" id="timerDisplay" role="timer" aria-label="Waktu tersisa" aria-live="off" aria-atomic="true">25:00</div>
+              <div class="ruler" id="ruler" aria-hidden="true">
+                <div class="ruler-ticks ruler-base"></div>
+                <div class="ruler-ticks ruler-fill"></div>
+                <div class="ruler-now"><span></span></div>
+              </div>
+              <p class="ruler-caption" id="rulerCaption">25 menit</p>
+            </div>
+
+            <div class="context" id="contextCard">
+              <div class="context-copy">
+                <p class="eyebrow" id="timerTitle">Sedang dikerjakan</p>
+                <p class="current-task" id="currentTask">Fokus bebas</p>
+                <p class="context-meta" id="contextMeta"></p>
+              </div>
+              <button class="text-button context-action" id="changeTask" type="button">Ganti</button>
+            </div>
+
+            <div class="controls">
+              <button class="control-secondary" id="resetTimer" type="button" aria-label="Ulang timer ke durasi penuh">
+                <span class="control-icon"><svg class="icon" aria-hidden="true"><use href="#i-reset" /></svg></span>
+                <span class="control-label" aria-hidden="true">Ulang</span>
+              </button>
+              <button class="control-primary" id="startPause" type="button">
+                <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg>
+                <span class="control-primary-label" id="startPauseLabel">Mulai fokus</span>
+              </button>
+              <button class="control-secondary" id="skipMode" type="button" aria-label="Lewati ke mode berikutnya">
+                <span class="control-icon"><svg class="icon" aria-hidden="true"><use href="#i-skip" /></svg></span>
+                <span class="control-label" aria-hidden="true">Lewati</span>
+              </button>
+            </div>
+
+            <button class="ambience-chip" id="ambienceQuick" type="button" aria-haspopup="dialog">
+              <svg class="icon" aria-hidden="true"><use href="#i-waves" /></svg>
+              <span id="ambienceQuickLabel">Suara latar: Mati</span>
+            </button>
+
+            <dl class="today-strip" aria-label="Ringkasan hari ini">
+              <div><dt>Sesi hari ini</dt><dd id="sessionCount">0</dd></div>
+              <div><dt>Waktu fokus</dt><dd id="focusMinutes">0m</dd></div>
+              <div><dt>Perkiraan selesai</dt><dd id="finishEstimate">—</dd></div>
+              <div class="cycle">
+                <dt id="cycleLabel">Menuju rehat panjang</dt>
+                <dd><span class="cycle-dots" id="cycleDots" role="img" aria-labelledby="cycleLabel"></span></dd>
+              </div>
+            </dl>
           </div>
-          <div class="drawer-content">
-            <section class="tasks-section" id="tasksPanel" role="tabpanel" aria-labelledby="tasksTab">
-              <div class="section-heading">
-                <div>
-                  <p class="eyebrow">Tasks</p>
-                  <h2>Today</h2>
+        </section>
+
+        <!-- TUGAS -->
+        <section class="view view-tasks" id="view-tasks" aria-labelledby="tasksHeading">
+          <div class="panel tasks-panel">
+            <header class="view-header">
+              <div>
+                <h2 class="view-title" id="tasksHeading">Tugas hari ini</h2>
+                <p class="view-subtitle" id="taskSummary">Belum ada tugas</p>
+              </div>
+            </header>
+
+            <form class="task-form" id="taskForm" novalidate>
+              <label class="field-label" for="taskInput">Tugas baru</label>
+              <div class="task-form-row">
+                <input id="taskInput" type="text" placeholder="Misalnya: Menulis bab dua" autocomplete="off" maxlength="200" aria-describedby="taskFormHint" />
+                <div class="estimate" role="group" aria-label="Estimasi pomodoro untuk tugas baru">
+                  <button type="button" class="estimate-step" data-step="-1" aria-label="Kurangi estimasi"><svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg></button>
+                  <input id="taskEstimate" type="number" min="1" max="20" value="1" inputmode="numeric" aria-label="Estimasi pomodoro" />
+                  <button type="button" class="estimate-step" data-step="1" aria-label="Tambah estimasi"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></button>
                 </div>
-                <span id="taskSummary">0 left</span>
+                <button class="button button-primary task-add" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg><span>Tambah</span></button>
               </div>
+              <p class="field-hint" id="taskFormHint">Angka = perkiraan jumlah pomodoro (1–20).</p>
+            </form>
 
-              <form class="task-form" id="taskForm">
-                <input id="taskInput" type="text" placeholder="Tulis tugas..." autocomplete="off" maxlength="200" aria-label="Nama tugas" />
-                <input id="taskEstimate" type="number" min="1" max="20" value="1" aria-label="Estimasi pomodoro" />
-                <button type="submit" title="Tambah tugas" aria-label="Tambah tugas"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus" /></svg></button>
-              </form>
+            <div class="task-list" id="taskList"></div>
+            <div class="task-done-group" id="taskDoneGroup" hidden>
+              <button class="group-toggle" id="taskDoneToggle" type="button" aria-expanded="true" aria-controls="taskDoneList">
+                <svg class="icon" aria-hidden="true"><use href="#i-chevron" /></svg><span id="taskDoneLabel">Selesai</span>
+              </button>
+              <div class="task-list" id="taskDoneList"></div>
+            </div>
+          </div>
+        </section>
 
-              <div class="task-list" id="taskList" aria-live="polite"></div>
-            </section>
-
-            <section class="settings-section" id="setupPanel" role="tabpanel" aria-labelledby="setupTab" hidden>
-              <div class="section-heading"><div><p class="eyebrow">Appearance</p><h2>Make it yours</h2></div></div>
-              <div class="theme-picker" aria-label="Tema utama">
-                <button class="theme-swatch active" type="button" data-theme="paper" title="Paper · putih" aria-label="Paper · putih"><span>Paper</span></button>
-                <button class="theme-swatch" type="button" data-theme="sage" title="Sage · hijau" aria-label="Sage · hijau"><span>Sage</span></button>
-                <button class="theme-swatch" type="button" data-theme="ink" title="Ink · hitam" aria-label="Ink · hitam"><span>Ink</span></button>
+        <!-- STATISTIK -->
+        <section class="view view-stats" id="view-stats" aria-labelledby="statsHeading">
+          <div class="panel stats-panel" id="statisticsPanel">
+            <header class="view-header">
+              <div>
+                <h2 class="view-title" id="statsHeading">Statistik</h2>
+                <p class="view-subtitle">Sedikit progres, setiap hari.</p>
               </div>
-              <p class="field-note">Palet pribadi</p>
-              <div class="custom-themes" id="customThemes"></div>
-              <form class="custom-theme-form" id="customThemeForm">
-                <label class="custom-color" title="Pilih warna"><input id="customColor" type="color" value="#ffffff" aria-label="Warna custom" /></label>
-                <input id="customThemeName" type="text" maxlength="24" placeholder="Nama warna (opsional)" aria-label="Nama warna custom" />
-                <button class="small-button" type="submit">Simpan</button>
-              </form>
-              <p class="field-note appearance-note">Latar dan panel mengikuti warna pilihanmu.</p>
-              <hr class="section-divider" />
-              <div class="section-heading">
-                <div>
-                  <p class="eyebrow">Settings</p>
-                  <h2>Focus setup</h2>
-                </div>
+            </header>
+
+            <div class="card today-card">
+              <div class="today-card-copy">
+                <p class="eyebrow">Penghitung aktif</p>
+                <p class="today-card-value"><span id="todayCardFocus">0m</span> · <span id="todayCardSessions">0 sesi</span></p>
+                <p class="field-hint">Arsipkan untuk menyimpan angka ini ke riwayat dan mulai menghitung dari nol.</p>
               </div>
+              <button class="button" id="resetDay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-archive" /></svg><span>Arsipkan hari ini…</span></button>
+            </div>
 
-              <div class="settings-grid">
-                <label>
-                  <span>Pomodoro</span>
-                  <input id="pomodoroDuration" type="number" min="1" max="180" value="25" />
-                </label>
-                <label>
-                  <span>Short break</span>
-                  <input id="shortBreakDuration" type="number" min="1" max="90" value="5" />
-                </label>
-                <label>
-                  <span>Long break</span>
-                  <input id="longBreakDuration" type="number" min="1" max="120" value="15" />
-                </label>
-                <label>
-                  <span>Long interval</span>
-                  <input id="longBreakInterval" type="number" min="2" max="12" value="4" />
-                </label>
-              </div>
-
-              <div class="toggle-list">
-                <label class="switch-row">
-                  <span>Auto-start breaks</span>
-                  <input id="autoStartBreaks" type="checkbox" />
-                </label>
-                <label class="switch-row">
-                  <span>Auto-start pomodoros</span>
-                  <input id="autoStartPomodoros" type="checkbox" />
-                </label>
-              </div>
-
-              <div class="sound-row">
-                <label class="audio-loop-field">
-                  <span>Alarm</span>
-                  <select id="alarmSound" class="native-audio-select" tabindex="-1" aria-hidden="true">
-                    <option value="assets/notification/alarm-beep.mp3">Alarm beep</option>
-                    <option value="assets/notification/beeps.mp3">Beeps</option>
-                    <option value="assets/notification/bell.wav">Bell</option>
-                    <option value="assets/notification/musical1.mp3">Musical 1</option>
-                    <option value="assets/notification/musical2.mp3">Musical 2</option>
-                    <option value="assets/notification/piano-music.mp3">Piano music</option>
-                    <option value="assets/notification/ring-tone.mp3">Ring tone</option>
-                    <option value="assets/notification/timer.mp3">Timer</option>
-                    <option value="assets/notification/victory.mp3" selected>Victory</option>
-                  </select>
-                  <div class="audio-select" id="alarmSelect">
-                    <button
-                      class="audio-select-button"
-                      id="alarmSoundButton"
-                      type="button"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                      aria-controls="alarmSoundMenu"
-                      aria-label="Suara alarm"
-                    >
-                      <span id="alarmSoundLabel">Victory</span>
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </button>
-                    <div class="audio-select-menu" id="alarmSoundMenu" role="listbox" aria-label="Suara alarm" inert>
-                      <button type="button" role="option" data-value="assets/notification/alarm-beep.mp3">Alarm beep</button>
-                      <button type="button" role="option" data-value="assets/notification/beeps.mp3">Beeps</button>
-                      <button type="button" role="option" data-value="assets/notification/bell.wav">Bell</button>
-                      <button type="button" role="option" data-value="assets/notification/musical1.mp3">Musical 1</button>
-                      <button type="button" role="option" data-value="assets/notification/musical2.mp3">Musical 2</button>
-                      <button type="button" role="option" data-value="assets/notification/piano-music.mp3">Piano music</button>
-                      <button type="button" role="option" data-value="assets/notification/ring-tone.mp3">Ring tone</button>
-                      <button type="button" role="option" data-value="assets/notification/timer.mp3">Timer</button>
-                      <button type="button" role="option" data-value="assets/notification/victory.mp3">Victory</button>
-                    </div>
-                  </div>
-                </label>
-              </div>
-
-              <div class="sound-row">
-                <label class="audio-loop-field">
-                  <span>Audio loop</span>
-                  <select id="ambientSound" class="native-audio-select" tabindex="-1" aria-hidden="true">
-                    <option value="">Off</option>
-                    <option value="assets/audio/coffee-shop.m4a">Coffee shop</option>
-                    <option value="assets/audio/fast-ticking.m4a">Fast ticking</option>
-                    <option value="assets/audio/fire-burning.m4a" selected>Fire burning</option>
-                    <option value="assets/audio/library.m4a">Library</option>
-                    <option value="assets/audio/ocean-shore.m4a">Ocean shore</option>
-                    <option value="assets/audio/rain.m4a">Rain</option>
-                    <option value="assets/audio/stream.m4a">Stream</option>
-                    <option value="assets/audio/ticking.m4a">Ticking</option>
-                    <option value="assets/audio/wind-through-trees.m4a">Wind through trees</option>
-                    <option value="assets/audio/wind-with-crickets.m4a">Wind with crickets</option>
-                  </select>
-                  <div class="audio-select" id="ambientSelect">
-                    <button
-                      class="audio-select-button"
-                      id="ambientSoundButton"
-                      type="button"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                      aria-controls="ambientSoundMenu"
-                      aria-label="Audio loop"
-                    >
-                      <span id="ambientSoundLabel">Fire burning</span>
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </button>
-                    <div class="audio-select-menu" id="ambientSoundMenu" role="listbox" aria-label="Audio loop" inert>
-                      <button type="button" role="option" data-value="">Off</button>
-                      <button type="button" role="option" data-value="assets/audio/coffee-shop.m4a">Coffee shop</button>
-                      <button type="button" role="option" data-value="assets/audio/fast-ticking.m4a">Fast ticking</button>
-                      <button type="button" role="option" data-value="assets/audio/fire-burning.m4a">Fire burning</button>
-                      <button type="button" role="option" data-value="assets/audio/library.m4a">Library</button>
-                      <button type="button" role="option" data-value="assets/audio/ocean-shore.m4a">Ocean shore</button>
-                      <button type="button" role="option" data-value="assets/audio/rain.m4a">Rain</button>
-                      <button type="button" role="option" data-value="assets/audio/stream.m4a">Stream</button>
-                      <button type="button" role="option" data-value="assets/audio/ticking.m4a">Ticking</button>
-                      <button type="button" role="option" data-value="assets/audio/wind-through-trees.m4a">Wind through trees</button>
-                      <button type="button" role="option" data-value="assets/audio/wind-with-crickets.m4a">Wind with crickets</button>
-                    </div>
-                  </div>
-                </label>
-                <label>
-                  <span>Volume audio</span>
-                  <input id="ambientVolume" type="range" min="0" max="100" value="45" />
-                </label>
-              </div>
-
-              <label class="notification-label">
-                <span>Notifikasi custom</span>
-                <textarea id="notificationText" rows="3">Waktunya berpindah mode. Ambil napas sebentar.</textarea>
-              </label>
-
-            </section>
-            <section class="statistics-section" id="statisticsPanel" role="tabpanel" aria-labelledby="statisticsTab" hidden>
-              <div class="section-heading"><div><p class="eyebrow">A little progress, every day</p><h2>Focus history</h2></div><div class="backup-actions"><button class="small-button" id="importHistory" type="button" title="Gabungkan cadangan statistik">Impor</button><button class="small-button" id="exportHistory" type="button" title="Unduh cadangan statistik">Ekspor</button></div></div>
-              <input id="importHistoryFile" type="file" accept=".json,application/json" hidden />
-              <div class="period-tabs" role="group" aria-label="Periode statistik">
+            <div class="stats-filters">
+              <div class="segmented" role="group" aria-label="Periode statistik">
                 <button type="button" data-period="1" aria-pressed="true">Hari ini</button>
                 <button type="button" data-period="7" aria-pressed="false">7 hari</button>
                 <button type="button" data-period="30" aria-pressed="false">30 hari</button>
                 <button type="button" data-period="all" aria-pressed="false">Semua</button>
               </div>
-              <label class="history-date-field"><span>Lihat tanggal tertentu</span><input id="historyDate" type="date" /><button type="button" class="text-button" id="clearHistoryDate" hidden>Hapus filter tanggal</button></label>
-              <div class="history-summary"><article><strong id="historyFocus">0m</strong><span>Waktu fokus</span></article><article><strong id="historySessions">0</strong><span>Sesi selesai</span></article></div>
-              <div class="focus-chart" id="focusChart" aria-label="Grafik waktu fokus harian"></div>
-              <p class="field-note" id="chartCaption" hidden></p>
-              <p class="field-note">Progres aktif ikut dalam ringkasan. Reset menyimpan progres ke riwayat, lalu memulai penghitung baru.</p>
-              <div class="history-toolbar"><label><input id="selectAllHistory" type="checkbox" /><span>Pilih arsip</span></label><button class="text-button danger-text" id="deleteHistory" type="button" disabled>Hapus terpilih</button></div>
+              <div class="date-filter">
+                <label class="date-field">
+                  <svg class="icon" aria-hidden="true"><use href="#i-calendar" /></svg>
+                  <span class="visually-hidden">Lihat tanggal tertentu</span>
+                  <input id="historyDate" type="date" />
+                </label>
+                <button type="button" class="text-button" id="clearHistoryDate" hidden>Hapus filter</button>
+              </div>
+            </div>
+
+            <div class="metrics" aria-live="polite">
+              <div class="metric"><span class="metric-label">Waktu fokus</span><strong class="metric-value" id="historyFocus">0m</strong></div>
+              <div class="metric"><span class="metric-label">Sesi selesai</span><strong class="metric-value" id="historySessions">0</strong></div>
+              <div class="metric"><span class="metric-label">Rata-rata per hari aktif</span><strong class="metric-value" id="historyAverage">—</strong></div>
+              <div class="metric"><span class="metric-label">Hari terbaik</span><strong class="metric-value" id="historyBest">—</strong></div>
+            </div>
+
+            <figure class="chart-figure" id="chartFigure">
+              <figcaption class="chart-caption" id="chartCaption">Waktu fokus per hari</figcaption>
+              <div class="chart-wrap">
+                <div class="chart-scale" aria-hidden="true"><span id="chartMax"></span></div>
+                <div class="focus-chart" id="focusChart" role="list" aria-label="Grafik waktu fokus harian"></div>
+              </div>
+            </figure>
+
+            <section class="history" aria-labelledby="historyHeading">
+              <div class="section-row">
+                <h3 class="section-title" id="historyHeading">Riwayat</h3>
+                <div class="history-toolbar">
+                  <label class="check-label"><input id="selectAllHistory" type="checkbox" /><span>Pilih semua arsip</span></label>
+                  <button class="text-button danger-text" id="deleteHistory" type="button" disabled>Hapus terpilih</button>
+                </div>
+              </div>
               <div class="history-list" id="historyList"></div>
-              <p class="field-note">Tersimpan di browser ini. Ekspor untuk membuat cadangan. Impor mendukung ekspor versi lama dan menggabungkan statistik setelah konfirmasi.</p>
+            </section>
+
+            <section class="card backup" aria-labelledby="backupHeading">
+              <div>
+                <h3 class="section-title" id="backupHeading">Cadangan statistik</h3>
+                <p class="field-hint">Data tersimpan di browser ini. Ekspor untuk membuat cadangan. Impor menerima file ekspor Quiet Pomo versi lama maupun baru dan menggabungkannya tanpa menggandakan data. Tugas dan pengaturan tidak ikut.</p>
+              </div>
+              <div class="backup-actions">
+                <button class="button" id="exportHistory" type="button"><svg class="icon" aria-hidden="true"><use href="#i-download" /></svg><span>Ekspor</span></button>
+                <button class="button" id="importHistory" type="button"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg><span>Impor</span></button>
+              </div>
+              <input id="importHistoryFile" type="file" accept=".json,application/json" hidden />
             </section>
           </div>
-        </aside>
-      </div>
+        </section>
+
+        <!-- PENGATURAN -->
+        <section class="view view-settings" id="view-settings" aria-labelledby="settingsHeading">
+          <div class="panel settings-panel">
+            <header class="view-header">
+              <div>
+                <h2 class="view-title" id="settingsHeading">Pengaturan</h2>
+                <p class="view-subtitle">Perubahan tersimpan otomatis di browser ini.</p>
+              </div>
+            </header>
+
+            <section class="group" aria-labelledby="groupTimer">
+              <h3 class="group-title" id="groupTimer">Timer</h3>
+              <div class="group-body">
+                <div class="duration-grid">
+                  <label class="duration"><span>Fokus</span><span class="duration-input"><input id="pomodoroDuration" type="number" min="1" max="180" value="25" inputmode="numeric" /><span aria-hidden="true">mnt</span></span></label>
+                  <label class="duration"><span>Rehat singkat</span><span class="duration-input"><input id="shortBreakDuration" type="number" min="1" max="90" value="5" inputmode="numeric" /><span aria-hidden="true">mnt</span></span></label>
+                  <label class="duration"><span>Rehat panjang</span><span class="duration-input"><input id="longBreakDuration" type="number" min="1" max="120" value="15" inputmode="numeric" /><span aria-hidden="true">mnt</span></span></label>
+                  <label class="duration"><span>Rehat panjang setiap</span><span class="duration-input"><input id="longBreakInterval" type="number" min="2" max="12" value="4" inputmode="numeric" /><span aria-hidden="true">sesi</span></span></label>
+                </div>
+                <p class="field-error" id="durationError" role="alert" hidden></p>
+                <label class="switch-row"><span class="switch-copy"><span>Mulai rehat otomatis</span><span class="field-hint">Rehat langsung berjalan setelah sesi fokus selesai.</span></span><input id="autoStartBreaks" class="switch" type="checkbox" role="switch" /></label>
+                <label class="switch-row"><span class="switch-copy"><span>Mulai fokus otomatis</span><span class="field-hint">Sesi fokus berikutnya langsung berjalan setelah rehat.</span></span><input id="autoStartPomodoros" class="switch" type="checkbox" role="switch" /></label>
+              </div>
+            </section>
+
+            <section class="group" aria-labelledby="groupSound">
+              <h3 class="group-title" id="groupSound">Suara</h3>
+              <div class="group-body">
+                <button class="setting-link" id="ambienceSettings" type="button" aria-haspopup="dialog">
+                  <span class="switch-copy"><span>Suara latar</span><span class="field-hint">Diputar hanya saat timer berjalan.</span></span>
+                  <span class="setting-value" id="ambienceSettingsValue">Mati</span>
+                  <svg class="icon" aria-hidden="true"><use href="#i-chevron-right" /></svg>
+                </button>
+                <label class="range-row">
+                  <span>Volume suara latar</span>
+                  <input id="ambientVolume" type="range" min="0" max="100" value="45" />
+                  <output id="ambientVolumeValue" for="ambientVolume">45%</output>
+                </label>
+                <fieldset class="choice-field">
+                  <legend>Nada alarm <span class="field-hint">Dimainkan sekali saat dipilih.</span></legend>
+                  <div class="choice-grid" id="alarmChoices"></div>
+                </fieldset>
+              </div>
+            </section>
+
+            <section class="group" aria-labelledby="groupNotify">
+              <h3 class="group-title" id="groupNotify">Notifikasi</h3>
+              <div class="group-body">
+                <div class="permission-row">
+                  <span class="permission-icon" aria-hidden="true"><svg class="icon"><use id="permissionIconUse" href="#i-bell-off" /></svg></span>
+                  <span class="switch-copy"><span id="permissionTitle">Notifikasi browser belum aktif</span><span class="field-hint" id="permissionHint">Izinkan agar kamu tahu saat sesi selesai di tab lain.</span></span>
+                  <button class="button" id="permissionAction" type="button">Izinkan</button>
+                </div>
+                <label class="stack-field">
+                  <span>Pesan notifikasi</span>
+                  <textarea id="notificationText" rows="2" maxlength="200">Waktunya berpindah mode. Ambil napas sebentar.</textarea>
+                  <span class="field-hint">Muncul di notifikasi saat sesi fokus atau rehat selesai.</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="group" aria-labelledby="groupLook">
+              <h3 class="group-title" id="groupLook">Tampilan</h3>
+              <div class="group-body">
+                <div class="theme-picker" role="group" aria-label="Tema">
+                  <button class="theme-swatch" type="button" data-theme="paper" aria-pressed="false"><span class="theme-preview" aria-hidden="true"><span>25:00</span><i></i></span><span class="theme-name">Paper</span></button>
+                  <button class="theme-swatch" type="button" data-theme="sage" aria-pressed="false"><span class="theme-preview" aria-hidden="true"><span>25:00</span><i></i></span><span class="theme-name">Sage</span></button>
+                  <button class="theme-swatch" type="button" data-theme="ink" aria-pressed="false"><span class="theme-preview" aria-hidden="true"><span>25:00</span><i></i></span><span class="theme-name">Ink</span></button>
+                </div>
+                <div class="custom-palettes">
+                  <p class="field-label">Palet pribadi</p>
+                  <div class="custom-themes" id="customThemes"></div>
+                  <form class="custom-theme-form" id="customThemeForm">
+                    <label class="color-well"><span class="visually-hidden">Warna latar palet</span><input id="customColor" type="color" value="#ffffff" /></label>
+                    <label class="custom-name"><span class="visually-hidden">Nama palet (opsional)</span><input id="customThemeName" type="text" maxlength="24" placeholder="Nama palet (opsional)" /></label>
+                    <button class="button" type="submit">Simpan palet</button>
+                  </form>
+                  <p class="field-hint">Teks dan garis menyesuaikan otomatis agar tetap terbaca.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <div class="toast" id="statusMessage" role="status" aria-atomic="true" tabindex="0" hidden></div>
-    <div class="storage-warning" id="storageWarning" role="alert" hidden>Data belum dapat disimpan di browser. Ekspor statistik sebelum menutup halaman.</div>
-    <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmTitle" aria-describedby="confirmDescription">
-      <h2 id="confirmTitle"></h2><p id="confirmDescription"></p>
-      <label class="import-snapshot-option" id="confirmImportOptions" hidden><input id="confirmImportCurrent" type="checkbox" /><span>Sertakan progres aktif dari ekspor lama. Ada data pada tanggal yang sama; centang hanya jika progres ini belum tercatat agar total tidak ganda.</span></label>
-      <div class="confirm-actions"><button class="small-button" id="confirmCancel" type="button">Batal</button><button class="small-button" id="confirmAccept" type="button">Lanjutkan</button></div>
+    <!-- Sheets & dialogs -->
+    <dialog class="sheet" id="taskSheet" aria-labelledby="taskSheetTitle">
+      <div class="sheet-head">
+        <h2 class="sheet-title" id="taskSheetTitle">Pilih tugas untuk fokus</h2>
+        <button class="icon-button" type="button" data-close aria-label="Tutup"><svg class="icon" aria-hidden="true"><use href="#i-close" /></svg></button>
+      </div>
+      <div class="sheet-body">
+        <div class="pick-list" id="taskPickList" role="radiogroup" aria-labelledby="taskSheetTitle"></div>
+      </div>
+      <div class="sheet-foot"><button class="button" type="button" id="taskSheetManage">Kelola tugas</button></div>
     </dialog>
+
+    <dialog class="sheet" id="ambienceSheet" aria-labelledby="ambienceSheetTitle">
+      <div class="sheet-head">
+        <h2 class="sheet-title" id="ambienceSheetTitle">Suara latar</h2>
+        <button class="icon-button" type="button" data-close aria-label="Tutup"><svg class="icon" aria-hidden="true"><use href="#i-close" /></svg></button>
+      </div>
+      <div class="sheet-body">
+        <fieldset class="choice-field">
+          <legend class="visually-hidden">Pilih suara latar</legend>
+          <div class="choice-grid ambience-grid" id="ambienceChoices"></div>
+        </fieldset>
+        <label class="range-row">
+          <span>Volume</span>
+          <input id="ambientVolumeQuick" type="range" min="0" max="100" value="45" />
+          <output id="ambientVolumeQuickValue" for="ambientVolumeQuick">45%</output>
+        </label>
+        <p class="field-hint" id="ambienceHint">Diputar saat timer berjalan, berhenti saat dijeda.</p>
+      </div>
+    </dialog>
+
+    <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmTitle" aria-describedby="confirmDescription">
+      <span class="confirm-icon" aria-hidden="true"><svg class="icon"><use id="confirmIconUse" href="#i-info" /></svg></span>
+      <h2 id="confirmTitle"></h2>
+      <p id="confirmDescription"></p>
+      <label class="check-label import-snapshot-option" id="confirmImportOptions" hidden><input id="confirmImportCurrent" type="checkbox" /><span>Sertakan progres aktif dari ekspor lama. Ada data pada tanggal yang sama; centang hanya jika progres ini belum tercatat agar total tidak ganda.</span></label>
+      <div class="confirm-actions"><button class="button" id="confirmCancel" type="button">Batal</button><button class="button button-primary" id="confirmAccept" type="button">Lanjutkan</button></div>
+    </dialog>
+
+    <div class="toast" id="statusMessage" role="status" aria-live="polite" aria-atomic="true" hidden><span id="statusText"></span><button class="toast-action" id="statusAction" type="button" hidden></button></div>
+    <div class="storage-warning" id="storageWarning" role="alert" hidden><svg class="icon" aria-hidden="true"><use href="#i-alert" /></svg><span>Data belum dapat disimpan di browser. Ekspor statistik sebelum menutup halaman.</span></div>
+
     <script src="focus-data.js"></script>
+    <script src="motion.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
