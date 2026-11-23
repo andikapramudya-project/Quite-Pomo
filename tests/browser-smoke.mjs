@@ -29,9 +29,15 @@ try {
   assert.equal(await page.locator("#sessionCount").textContent(), "3");
   await page.screenshot({ path: "artifacts/quiet-pomo-desktop.png", fullPage: true });
 
+  await page.locator('.nav-item[data-nav="stats"]').click();
   await page.locator("#resetDay").click();
   await page.locator("#confirmCancel").click();
+  assert.equal(await page.evaluate(() => document.activeElement.id), "resetDay"); // Focus returns to the opener.
   assert.equal((await stored()).stats.sessions, 3);
+  await page.locator("#resetDay").click();
+  await page.keyboard.press("Escape"); // Escape cancels without archiving.
+  assert.equal(await page.locator("#confirmDialog").isVisible(), false);
+  assert.equal((await stored()).history.length, 0);
   await page.locator("#resetDay").click();
   await page.locator("#confirmAccept").click();
   let saved = await stored();
@@ -44,9 +50,8 @@ try {
   await page.reload();
   assert.equal((await stored()).history.length, 1);
 
-  await page.locator("#settingsToggle").click();
-  await page.locator("#statisticsTab").click();
-  assert.equal(await page.locator("#historyFocus").textContent(), "1h 30m");
+  await page.locator('.nav-item[data-nav="stats"]').click();
+  assert.equal(await page.locator("#historyFocus").textContent(), "1j 30m");
   await page.locator('[data-period="7"]').click();
   assert.equal(await page.locator(".chart-column").count(), 7);
   await page.locator('[data-period="30"]').click();
@@ -55,7 +60,7 @@ try {
   await page.locator("#historyDate").fill("2020-01-01");
   assert.equal(await page.locator("#historyFocus").textContent(), "0m");
   await page.locator("#clearHistoryDate").click();
-  assert.equal(await page.locator("#historyFocus").textContent(), "1h 30m");
+  assert.equal(await page.locator("#historyFocus").textContent(), "1j 30m");
   await page.locator("#selectAllHistory").check();
   await page.locator('[data-period="30"]').click();
   assert.equal(await page.locator("#selectAllHistory").isChecked(), false);
@@ -77,19 +82,19 @@ try {
   await page.locator("#confirmAccept").click();
   assert.deepEqual((await stored()).history.map((entry) => entry.id), ["keep"]);
 
-  await page.locator("#setupTab").click();
-  const colors = () => page.evaluate(() => {
+  await page.locator('.nav-item[data-nav="settings"]').click();
+  // Theme colors cross-fade (120 ms with reduced motion); read them once the transition settled.
+  const colors = async () => { await page.waitForTimeout(250); return page.evaluate(() => {
     const style = (selector) => getComputedStyle(document.querySelector(selector));
-    return { card: style(".timer-card").backgroundColor, text: style("#timerDisplay").color, button: style("#startPause").backgroundColor, slider: style("#ambientVolume").getPropertyValue("--control").trim() };
-  });
+    return { card: style(".context").backgroundColor, bg: style("body").backgroundColor, text: style("#timerDisplay").color, button: style("#startPause").backgroundColor };
+  }); };
   await page.locator('[data-theme="paper"]').click();
   const paper = await colors();
   await page.locator('[data-theme="sage"]').click();
   const sage = await colors();
   assert.notEqual(paper.card, sage.card);
-  assert.equal(paper.text, sage.text);
-  assert.equal(paper.button, sage.button);
-  assert.equal(paper.slider, sage.slider);
+  assert.notEqual(paper.bg, sage.bg);
+  assert.equal((await stored()).settings.theme, "sage");
   await page.locator("#customColor").fill("#b6c8e0");
   await page.locator("#customThemeName").fill("Blue hour");
   await page.locator('#customThemeForm button[type="submit"]').click();
@@ -98,16 +103,15 @@ try {
   assert.equal((await stored()).settings.customThemes.length, 1);
   await page.reload();
   assert.equal((await stored()).settings.customThemes[0].name, "Blue hour");
-  await page.locator("#settingsToggle").click();
-  await page.locator("#setupTab").click();
+  await page.locator('.nav-item[data-nav="settings"]').click();
   await page.locator(".custom-theme-remove").click();
   assert.equal((await stored()).settings.theme, "paper");
   assert.equal(await page.locator(".theme-swatch").count(), 3);
   await page.locator('[data-theme="ink"]').click();
   const ink = await colors();
-  assert.equal(ink.text, "rgb(250, 250, 250)");
+  assert.equal(ink.text, "rgb(240, 239, 235)");
   await page.screenshot({ path: "artifacts/quiet-pomo-ink.png", fullPage: true });
-  await page.locator("#settingsClose").click();
+  await page.locator('.nav-item[data-nav="focus"]').click();
 
   // A delayed background tick must never count more than the remaining focus duration.
   await page.evaluate(() => {
@@ -129,13 +133,18 @@ try {
   await page.locator('[data-mode="pomodoro"]').click();
   await page.screenshot({ path: "artifacts/quiet-pomo-mobile.png", fullPage: true });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-  await page.locator("#settingsToggle").click();
-  await page.locator("#statisticsTab").click();
+  await page.locator('.nav-item[data-nav="stats"]').click();
   await page.screenshot({ path: "artifacts/quiet-pomo-mobile-statistics.png", fullPage: true });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-  assert.equal(await page.locator("#settingsDrawer").getAttribute("aria-hidden"), "false");
+  assert.equal(await page.locator("#view-stats").isVisible(), true);
+  assert.equal(await page.locator("#view-focus").isVisible(), false);
+  // Sheets close with Escape and return focus to their opener.
+  await page.locator('.nav-item[data-nav="focus"]').click();
+  await page.locator("#ambienceQuick").click();
+  assert.equal(await page.locator("#ambienceSheet").isVisible(), true);
   await page.keyboard.press("Escape");
-  assert.equal(await page.locator("#settingsDrawer").getAttribute("aria-hidden"), "true");
+  assert.equal(await page.locator("#ambienceSheet").isVisible(), false);
+  assert.equal(await page.evaluate(() => document.activeElement.id), "ambienceQuick");
 
   // The upgrader preserves totals and old custom/Clay colors without duplicating them.
   const upgradeContext = await browser.newContext({ timezoneId: "Asia/Makassar", reducedMotion: "reduce" });
@@ -155,8 +164,7 @@ try {
   await upgrade.reload();
   assert.equal(await upgrade.evaluate(() => state.history.length), 1);
   assert.equal(await upgrade.evaluate(() => state.settings.customThemes.length), 1);
-  await upgrade.locator("#settingsToggle").click();
-  await upgrade.locator("#statisticsTab").click();
+  await upgrade.locator('.nav-item[data-nav="stats"]').click();
   await upgrade.locator('[data-period="all"]').click();
   assert.match(await upgrade.locator("#historyList").textContent(), /Data sebelumnya/);
   const downloadEvent = upgrade.waitForEvent("download");
@@ -182,6 +190,7 @@ try {
   assert.equal(split.stats.sessions, 1);
   assert.equal(split.stats.date, "2026-10-03");
   await midnight.evaluate(() => { Storage.prototype.setItem = () => { throw new DOMException("Full", "QuotaExceededError"); }; });
+  await midnight.evaluate(() => setView("stats"));
   await midnight.locator("#resetDay").click();
   await midnight.locator("#confirmAccept").click();
   assert.equal(await midnight.evaluate(() => state.stats.focusSeconds), split.stats.focusSeconds);
@@ -190,7 +199,7 @@ try {
   assert.equal(await midnight.locator("#storageWarning").isVisible(), true);
   await midnightContext.close();
   assert.deepEqual(errors, []);
-  console.log("Browser smoke passed: reset/archive, persistence, filters, selective deletion, themes, legacy migration, export, midnight, storage failure, timer accounting, desktop/mobile, keyboard, no page errors.");
+  console.log("Browser smoke passed: dialog Escape/focus return, sheets, reset/archive, persistence, filters, selective deletion, themes, legacy migration, export, midnight, storage failure, timer accounting, desktop/mobile, keyboard, no page errors.");
 } finally {
   await browser.close();
 }
